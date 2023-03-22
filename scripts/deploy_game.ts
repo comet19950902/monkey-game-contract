@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const tokenAddress = "0x36bC3a54E108193c23C3f2023a9DbCDc59b76dc7";       // ERC20_Contract address
+  const tokenAddress = "0x0f81d97d3ae1f0EAc85111818E2C56d4A6234109";       // ERC20_Contract address
   const devWallet = "0x9406aCF779A630a1451De816a957DA9322478A48";          // My Wallet address
 
   const MonkeyGame = await ethers.getContractFactory("MonkeyGame");

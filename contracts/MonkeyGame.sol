@@ -16,7 +16,7 @@ contract MonkeyGame is ReentrancyGuard, Ownable {
     }
 
     address public devWallet;
-    uint256 public entryFee = 25;
+    uint256 public entryFee = 25 * 10000;
     uint256 public tryResetTime = 1 days;
     uint256 public lastTryReset;
     LevelReward[] public levelReward;
@@ -68,6 +68,8 @@ contract MonkeyGame is ReentrancyGuard, Ownable {
         
         uint256 restartFee = potentialReward * 40 / 100;
         require( token.balanceOf( msg.sender ) >= restartFee, "Not enough tokens to restart" );
+        tokensEarned[ msg.sender ] -= restartFee;
+        tokensBurned[ msg.sender ] += restartFee;
         
         bool flgToContract = token.transferFrom( msg.sender, address( this ), restartFee );
         require( flgToContract == true, "Tokens Transaction have to transfer into game is failed!" );
@@ -94,6 +96,13 @@ contract MonkeyGame is ReentrancyGuard, Ownable {
         
         emit TokensEarned( player_, upReward );
         emit LevelUp( player_, playerLevel[ player_ ] );
+    }
+
+    function gameOver() public{
+        require( alreadyPlayedToday[ msg.sender ], "Game didn't started" );
+        require( _initGame(), "Game can't over.");
+        playerLevel[ msg.sender ] = 0;
+        alreadyPlayedToday[ msg.sender ] = false;
     }
     
     function setLevelReward( LevelReward[] memory levelList ) public onlyOwner{
@@ -122,7 +131,7 @@ contract MonkeyGame is ReentrancyGuard, Ownable {
             
             LevelReward memory lvlRwd;
             lvlRwd.level = i;
-            lvlRwd.reward = curAmount;
+            lvlRwd.reward = ( curAmount - initAmount_ );
 
             levelReward.push( lvlRwd );
         }
@@ -143,6 +152,7 @@ contract MonkeyGame is ReentrancyGuard, Ownable {
     function _initGame() private returns( bool ){
         playerLevel[ msg.sender ] = 1;
         tokensEarned[ msg.sender ] = 0;
+        tokensBurned[ msg.sender ] = 0;
         alreadyPlayedToday[ msg.sender ] = true;
         _seedLvlReward();
 

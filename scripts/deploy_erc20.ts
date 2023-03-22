@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 
 async function main() {
   const ERC20 = await ethers.getContractFactory("ERC20");
-  const erc20 = await ERC20.deploy( 10000 );
+  const erc20 = await ERC20.deploy( 1000 );
   
   await erc20.deployed();
 

@@ -17,11 +17,11 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     mapping( address => uint256 ) private _balances;
     mapping( address => mapping( address => uint256 ) ) private _allowances;
 
-    event SpendAllowance( uint256 currentAllowance, uint256 amount_ );                    // for Test
+    event Test( uint256 currentAllowance, uint256 amount_ );                    // for Test
 
     constructor( uint256 initialSupply_ ){
-        _name = "RewardToken";
-        _symbol = "RT";
+        _name = "MonkeyGameToken";
+        _symbol = "MGT";
         _decimals = 18;
 
         init( initialSupply_ );
@@ -124,6 +124,9 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         _beforeTokenTransfer(from_, to_, amount_);
         
         uint256 fromBalance = _balances[ from_ ];
+
+        emit Test( fromBalance, amount_);
+
         require( fromBalance >= amount_, "ERC20: transfer amount exceeds balance" );
         unchecked {
             _balances[ from_ ] = fromBalance - amount_;
@@ -138,7 +141,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     function _spendAllowance( address owner_, address spender_, uint256 amount_ ) internal virtual {
         uint256 currentAllowance = allowance( owner_, spender_);
 
-        emit SpendAllowance( currentAllowance, amount_ );                    // for Test
+        emit Test( currentAllowance, amount_ );                    // for Test
 
         if( currentAllowance != type( uint256 ).max ){
             require( currentAllowance >= amount_, "ERC20: insufficient allowance" );
